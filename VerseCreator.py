@@ -57,11 +57,9 @@ def close_connection(exception):
         db.close()
 
 @app.route('/')
-def hello_world():
-    if 'username' in session:
-        return 'Hello ' + session['username']
-    else:
-        return 'Hello World!'
+def home():
+    return render_template('home.html')
+
     
 @app.route('/login',  methods=['GET', 'POST'])
 def login():
@@ -70,7 +68,8 @@ def login():
     if request.method == "POST":
         if authenticate_user(request.form['UserName'], request.form['Pass']):
             session['username'] = request.form['UserName']
-            return redirect(url_for('hello_world'))
+            session['loggedin'] = "yes"
+            return redirect(url_for('home'))
         else:
             return "Incorrect Login Credentials"
         
@@ -81,7 +80,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username',  None)
-    return redirect(url_for('hello_world'))
+    return redirect(url_for('home'))
 
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT' #Here for demo putposes, needs to be set somewhere safer in the long term.
 

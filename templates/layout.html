@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+
+<div id="header">
+	{% if not loggedin in session %}
+		<a href="{{ url_for('login') }}">log in</a>
+	{% else %}
+		Welcome {{ session['username'] }}, <a href="{{ url_for('logout') }}">log out</a>
+	{% endif %}
+</div>
+<div id="menu">
+</div>
+
+<div id="content">
+{% block content %}
+{% endblock %}
+</div>
+
+<div id="footer">
+</div>
+
+</body>
+</html>
