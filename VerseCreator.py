@@ -7,48 +7,25 @@ from flask import g
 from flask import request
 from flask import render_template
 from flask import session, redirect, url_for
-import hashlib
+
+#all my fun functions. vc means VerseCreator
+from vcfuncs import sanitise
+import vcfuncs
 
 app = Flask(__name__)
 
 #Some vars, can probably change or be externalised into a file at some stage.
-databaseFile = 'versecreator.db'
+database_file = 'versecreator.db'
+default_admin = 'admin'
 
 #Setting up a function to talk to the DB.
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(databaseFile)
+        db = g._database = sqlite3.connect(database_file)
     return db
-
-#Authenticates the user.
-#Takes a username and password entered in the login form and validates that the user exists before logging
-#them in.
-#TODO error throwing if a user doesn't exist.
-def authenticate_user(uname,  password_submitted):
-    #Getting the DB cursor
-    c = get_db().cursor()
-    #Getting username from the DB. Note the [], remember this function takes a tuple, not a single string.
-    c.execute('SELECT UserName, Pass FROM tblUser WHERE UserName = ? LIMIT 1',  [uname])
-    #One line returned, no need for a foreach.
-    user_info = c.fetchone()
-    #Checking to see if there was any user records returned.
-    if not user_info:
-        return False
-    #Gets the password.
-    password_stored = user_info[1]
-    #compares the newly hashed submitted pass against the hash in the DB
-    if password_stored == hash_pass(password_submitted):
-        return True
-    else:
-        return False
-
     
-#This function hashes the submitted password.
-def hash_pass(PassWord):
-    password_encrypted = hashlib.sha256(PassWord.encode())
-    return password_encrypted.hexdigest()
-    
+
 #When a request is finished it also closes the database connection.
 @app.teardown_appcontext
 def close_connection(exception):
@@ -58,31 +35,82 @@ def close_connection(exception):
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html',  title="Verse Creator Home")
 
-    
+#Todo, Security
+#new_uname, the username submitted in the create user form.
+#new_upass, the users new password.
+@app.route('/newuser',  methods=['GET',  'POST'])
+def newuser():
+    if request.method == "POST":
+        vcfuncs.new_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass']))
+        return redirect(url_for('listusers'))
+    elif request.method == "GET":
+        return render_template("new_user.html",  title="Create A New User")
+    else:
+        return render_template("new_user.html",  title="Create A New User")
+
+#Lists all users, currently temporary, might change.
+@app.route('/listusers')
+def listusers():
+    userlist = "<ul>"
+    c = get_db().cursor()
+    for user in c.execute("SELECT ID, UserName FROM tblUser"):
+        userlist += str(user[0])+" "+user[1]+"<br />"
+    return userlist
+
+#gname = group name
+#gdesc = group desc
+@app.route('/newgroup',  methods=['GET', 'POST'])
+def newgroup():
+    if request.method == "POST":
+        vcfuncs.new_group(get_db(), sanitise(request.form['GroupName']), sanitise(request.form['Description']))
+        return redirect(url_for('listgroups'))
+    elif request.method == "GET":
+        return render_template("new_group.html",  title="Create A New Group")
+    else:
+        return render_template("new_group.html",  title="Create A New Group")
+        
+@app.route('/listgroups')
+def listgroups():
+    grouplist = ""
+    c = get_db().cursor()
+    for group in c.execute("SELECT * FROM tblGroup"):
+        grouplist += str(group[0])+" "+group[1]+" "+group[2]+"<br />"
+    return grouplist
+
+@app.route('/addgroupmembership',  methods=['GET', 'POST'])
+def newgroupmembership():
+    if request.method == "POST":
+        if vcfuncs.new_group_membership(get_db(),  sanitise(request.form['GroupID']),  sanitise(request.form['UserID'])):
+            return redirect(url_for('home'))
+        #change this.
+        return "lol"
+    else:
+        return render_template('new_group_membership.html',  title="Add A User to A Group")
+
 @app.route('/login',  methods=['GET', 'POST'])
 def login():
     #This will either display the login form to the users (GET method) or log in the user through args passed by the login
     #form (POST)
     if request.method == "POST":
-        if authenticate_user(request.form['UserName'], request.form['Pass']):
+        if vcfuncs.authenticate_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass'])):
             session['username'] = request.form['UserName']
-            session['loggedin'] = "yes"
+            session['logged_in'] = True
             return redirect(url_for('home'))
         else:
             return "Incorrect Login Credentials"
         
     elif request.method == "GET":
-        return render_template('login.html')
+        return render_template('login.html',  title="Login")
  
 #Log the user out. 
 @app.route('/logout')
 def logout():
-    session.pop('username',  None)
+    session.clear()
     return redirect(url_for('home'))
 
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT' #Here for demo putposes, needs to be set somewhere safer in the long term.
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT' #Here for demo purposes, needs to be set somewhere safer in the long term.
 
 if __name__ == '__main__':
     app.run(debug=True)

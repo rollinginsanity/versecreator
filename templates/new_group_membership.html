@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+    <form method ="post" action="addgroupmembership">
+	<input type="text" name="UserID" />
+	<br />
+	<input type="text" name="GroupID" />
+	<br />
+	<input type="submit" value="Create User" />
+	</form>
+{% endblock %}
