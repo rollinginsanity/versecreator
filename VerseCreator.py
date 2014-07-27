@@ -24,7 +24,7 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect(database_file)
     return db
-    
+
 
 #When a request is finished it also closes the database connection.
 @app.teardown_appcontext
@@ -70,7 +70,7 @@ def newgroup():
         return render_template("new_group.html",  title="Create A New Group")
     else:
         return render_template("new_group.html",  title="Create A New Group")
-        
+
 @app.route('/listgroups')
 def listgroups():
     grouplist = ""
@@ -97,14 +97,17 @@ def login():
         if vcfuncs.authenticate_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass'])):
             session['username'] = request.form['UserName']
             session['logged_in'] = True
+            #There needs to be a better way to validate admin users, but for the minute this will work.
+            if session['username'] == "admin":
+              session['is_admin'] = True
             return redirect(url_for('home'))
         else:
             return "Incorrect Login Credentials"
-        
+
     elif request.method == "GET":
         return render_template('login.html',  title="Login")
- 
-#Log the user out. 
+
+#Log the user out.
 @app.route('/logout')
 def logout():
     session.clear()

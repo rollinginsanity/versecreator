@@ -2,31 +2,89 @@
 <html>
 <head>
 <title>{{ title }}</title>
+
+<!--Nav Bar Style, again, lifted from the Boostrap Examples -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/navbar-fixed-top.css') }}" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<!--Nav Bar Style, again, lifted from the Boostrap Examples -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/theme.css') }}" />
+<!-- My CSS for when I need my own CSS. -->
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainstyle.css') }}" />
 </head>
 <body>
+<!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Verse Creator</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Verse <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">View All</a></li>
+                <li><a href="#">New Verse</a></li>
+              </ul>
+            </li>
+						<!-- Admin menu, hidden from non-admins. Will come up with better logic someday. -->
+						{% if session['is_admin'] %}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="newuser">New User</a></li>
+								<li><a href="listusers">List Users</a></li>
+								<li><a href="newgroup">New Group</a></li>
+								<li><a href="listgroups">List Groups</a></li>
+							</ul>
+						</li>
+						{% endif %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+						<li>
+	            {% if not session['logged_in'] %}
+							<a href="{{ url_for('login') }}">log in</a>
+							{% else %}
+							<a href="user/{{session['username']}}">Welcome {{ session['username'] }} </a>
+						</li>
+						<li>
+							<a href="{{ url_for('logout') }}">log out</a>
+							{% endif %}
+						</li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
 
-<div class="header">
 	<div class="loginbar">
-		{% if not session['logged_in'] %}
-			<a href="{{ url_for('login') }}">log in</a>
-		{% else %}
-			Welcome {{ session['username'] }}, <a href="{{ url_for('logout') }}">log out</a>
-		{% endif %}
+
+	</div>
+
+<div class="middle">
+	<div class="container">
+		<div class="page-header">
+			<h3>{{ title }}</h3>
+		</div>
+		{% block content %}
+		{% endblock %}
 	</div>
 </div>
-<div id="menu">
-</div>
 
-<h1>{{ title }}</h1>
-
-<div id="content">
-{% block content %}
-{% endblock %}
-</div>
-
-<div id="footer">
-</div>
-
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- Bootstrap from the CDN. This will one day be locally hosted... -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

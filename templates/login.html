@@ -1,17 +1,44 @@
-<!doctype html>
-<html>
-<head>
-<title>Login</title>
-</head>
-<body>
+<!DOCTYPE html>
+<!-- Mostly lifted from the Boostrap Examples page, with some small modifications. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-<form method ="post" action="login">
-	<input type="text" name="UserName" />
-	<br />
-	<input type="text" name="Pass" />
-	<br />
-	<input type="submit" value="Login" />
-</form>
+    <title>{{ title }}</title>
 
-</body>
+		<!-- My CSS for when I need my own CSS. -->
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainstyle.css') }}" />
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	  </head>
+
+		<!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='styles/signin.css') }}" rel="stylesheet">
+
+  <body>
+
+    <div class="container">
+
+      <form class="form-signin" role="form" method="post" action="login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <input type="text" class="form-control" placeholder="Username" name="UserName" required autofocus>
+        <input type="password" class="form-control" placeholder="Password" name="Pass" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!-- Bootstrap from the CDN. This will one day be locally hosted... -->
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  </body>
 </html>
