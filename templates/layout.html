@@ -2,15 +2,18 @@
 <html>
 <head>
 <title>{{ title }}</title>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainstyle.css') }}" />
 </head>
 <body>
 
-<div id="header">
-	{% if not session['logged_in'] %}
-		<a href="{{ url_for('login') }}">log in</a>
-	{% else %}
-		Welcome {{ session['username'] }}, <a href="{{ url_for('logout') }}">log out</a>
-	{% endif %}
+<div class="header">
+	<div class="loginbar">
+		{% if not session['logged_in'] %}
+			<a href="{{ url_for('login') }}">log in</a>
+		{% else %}
+			Welcome {{ session['username'] }}, <a href="{{ url_for('logout') }}">log out</a>
+		{% endif %}
+	</div>
 </div>
 <div id="menu">
 </div>
