@@ -3,10 +3,16 @@
   <form method ="post" action="newuser" role="form">
   <label for="UserName">Username</label>
 	<input type="text" class="form-control stdctlwidth" name="UserName" />
-	<br />
   <label for="Password">Password</label>
-	<input type="text" class="form-control stdctlwidth" name="Pass" />
-	<br />
+  <input type="text" class="form-control stdctlwidth" name="Pass" />
+  <label for="FirstName">First Name</label>
+  <input type="text" class="form-control stdctlwidth" name="FirstName" />
+  <label for="LastName">Last Name</label>
+  <input type="text" class="form-control stdctlwidth" name="LastName" />
+  <label for="Bio">Bio (A bit about yourself.)</label>
+  <textarea class="form-control wdctlwidth" name="Bio"></textarea>
+  </br >
+
 	<input type="submit" class="btn btn-primary" value="Create User" />
 	</form>
 {% endblock %}

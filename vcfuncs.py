@@ -20,7 +20,7 @@ def new_user(conn,  username,  password,  bio="Please write a bit about yourself
     c.execute("INSERT INTO tblUSER VALUES(null, ?, ?, ?, ? ,?)",  [username, fname, lname, hash_pass(password), bio])
     conn.commit()
     return True
-    
+
 def new_group(conn, group_name, group_description):
     c = conn.cursor()
     c.execute("INSERT INTO tblGroup(ID, Name, Description) VALUES(null, ?, ?)",  [group_name, group_description])
@@ -32,10 +32,10 @@ def new_group(conn, group_name, group_description):
 def new_verse(title, user_name):
     #Will need to lookup the users username to get their ID as the query will need it as well as their first and last names.
     pass
-    
+
 def new_story():
     pass
-    
+
 def new_chapter():
     pass
 
@@ -46,19 +46,19 @@ def new_character():
 
 def new_character_relationship():
     pass
-    
+
 def new_character_verse_association():
     pass
-    
+
 def new_character_story_association():
     pass
-    
+
 def new_character_chapter_association():
     pass
-    
+
 def new_character_attribute():
     pass
-    
+
 def new_character_role_type():
     pass
 
@@ -69,7 +69,7 @@ def new_character_attribute_type():
 #Cleans up user input by converting unicode to HTML entities.
 def sanitise(text):
     return escape(text, quote=True)
-    
+
 #Authenticates the user.
 #Takes a username and password entered in the login form and validates that the user exists before logging
 #them in.
@@ -91,8 +91,20 @@ def authenticate_user(conn,  uname,  password_submitted):
         return True
     else:
         return False
-    
-        
+
+#Gets a users ID for all sorts of relational awsomeness.
+def get_user_id(conn, username):
+  c = conn.cursor()
+  c.execute('SELECT ID FROM tblUser WHERE UserName = ? LIMIT 1',  [username])
+  id = c.fetchone()
+  return id[0]
+
+#Gets user information based off their ID
+def get_user_info(conn, id):
+  c = conn.cursor()
+  c.execute('SELECT ID, UserName, FirstName, LastName, Bio FROM tblUser WHERE ID = ? LIMIT 1',  [id])
+  return c.fetchone()
+
 #This function hashes the submitted password.
 def hash_pass(PassWord):
     password_encrypted = hashlib.sha256(PassWord.encode())

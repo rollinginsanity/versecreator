@@ -43,7 +43,7 @@ def home():
 @app.route('/newuser',  methods=['GET',  'POST'])
 def newuser():
     if request.method == "POST":
-        vcfuncs.new_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass']))
+        vcfuncs.new_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass']), sanitise(request.form['Bio']), sanitise(request.form['FirstName']), sanitise(request.form['LastName']))
         return redirect(url_for('listusers'))
     elif request.method == "GET":
         return render_template("new_user.html",  title="Create A New User")
@@ -52,12 +52,11 @@ def newuser():
 
 #Lists all users, currently temporary, might change.
 @app.route('/listusers')
-def listusers():
-    userlist = "<ul>"
+def list_users():
     c = get_db().cursor()
-    for user in c.execute("SELECT ID, UserName FROM tblUser"):
-        userlist += str(user[0])+" "+user[1]+"<br />"
-    return userlist
+    c.execute("SELECT ID, UserName, FirstName, LastName, Bio FROM tblUser")
+    userlist = c.fetchall()
+    return render_template("list_users.html",title="List All Users",users=userlist)
 
 #gname = group name
 #gdesc = group desc
@@ -97,6 +96,7 @@ def login():
         if vcfuncs.authenticate_user(get_db(), sanitise(request.form['UserName']), sanitise(request.form['Pass'])):
             session['username'] = request.form['UserName']
             session['logged_in'] = True
+            session['user_id'] = vcfuncs.get_user_id(get_db(), session['username'])
             #There needs to be a better way to validate admin users, but for the minute this will work.
             if session['username'] == "admin":
               session['is_admin'] = True
@@ -107,11 +107,21 @@ def login():
     elif request.method == "GET":
         return render_template('login.html',  title="Login")
 
+@app.route('/user/<userid>')
+def view_user(userid):
+  return render_template("view_user.html", title="View User", userinfo=vcfuncs.get_user_info(get_db(), userid))
+
+
 #Log the user out.
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
+
+#This is bad, it will need to go.
+@app.route('/debug')
+def debug():
+  return render_template('debug.html')
 
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT' #Here for demo purposes, needs to be set somewhere safer in the long term.
 
