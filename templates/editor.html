@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<title>{{ title }}</title>
+
+
+<!-- My CSS for when I need my own CSS. -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainstyle.css') }}" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+</head>
+<body>
+
+<div style="width:800px; height=100%; margin: 0 auto; padding-top: 20px;"
+  <div id="metainfo">
+  <input type="text" class="form-control" id="Title" />
+  </div>
+</div>
+<br />
+<div id="epiceditor" style="height:500px;"></div>
+
+<!-- Epic Editor) -->
+<script src="{{ url_for("static", filename="EpicEditor/js/epiceditor.min.js") }}"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- Bootstrap from the CDN. This will one day be locally hosted... -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+var opts = {
+  container: 'epiceditor',
+  basePath: '{{ url_for("static", filename="EpicEditor") }}',
+  clientSideStorage: true,
+  localStorageName: 'epiceditor',
+  useNativeFullsreen: true,
+  parser: marked,
+  file: {
+    name: 'epiceditor',
+    defaultContent: '',
+    autoSave: 100
+  },
+  theme: {
+    base:'/themes/base/epiceditor.css',
+    preview:'  /themes/preview/preview-dark.css',
+    editor:'/themes/editor/epic-dark.css'
+  },
+  focusOnLoad: false,
+  shortcut: {
+    modifier: 18,
+    fullscreen: 70,
+    preview: 80
+  }
+}
+var editor = new EpicEditor(opts);
+editor.load(function () {
+  console.log("Editor loaded.")
+});
+//Replace with something time based for regular draft saves?
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        var content = editor.exportFile();
+        alert(content);
+    }
+});
+
+</script>
+</body>
+</html>

@@ -123,6 +123,12 @@ def logout():
 def debug():
   return render_template('debug.html')
 
+#Just a test for the editor template, this will actually be called by other
+#functions that specifiy the context of what is being edited. :)
+@app.route('/edit')
+def edit():
+  return render_template('editor.html', title="Editor")
+
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT' #Here for demo purposes, needs to be set somewhere safer in the long term.
 
 if __name__ == '__main__':
