@@ -1,6 +1,6 @@
 #This is a small application for creating fictional worlds in which stories can then be written.
 #Author: Reece Payne
-#License: TBD
+#License: Do Whatever You Want, but there's no claim from me that it will work, or that this won't explode your computer and eat the souls of your unborn children.
 import sqlite3
 from flask import Flask
 from flask import g
